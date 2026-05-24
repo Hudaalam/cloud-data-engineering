@@ -2,8 +2,8 @@
 --  RETAILMART — SQL CAPSTONE PROJECT
 --  Industry : Retail (3-store chain)
 --  Duration : 3 Hours
---  Covers   : DDL, DML, SELECT, JOINs, GROUP BY, Subqueries, 
---             UNION/INTERSECT/EXCEPT, CTEs,
+--  Covers   : DDL, DML, SELECT, JOINs, GROUP BY,  Subqueries, 
+--             UNION/INTERSECT/EXCEPT, CTEs, 
 --             Window Functions, PIVOT, Views, Indexes,
 --             Stored Procedures
 -- ============================================================
@@ -35,6 +35,8 @@
 --    PRIMARY KEY, IDENTITY(1,1), NOT NULL, UNIQUE,
 --    DEFAULT, CHECK, REFERENCES
 -- ============================================================
+-- create database retail_store;
+ create  schema retailmart
 
 
 -- ============================================================
@@ -44,10 +46,10 @@
 
 CREATE TABLE retailmart.categories (
 
-    category_id     ___________  ___________  ___________,
+    category_id     INT PRIMARY KEY IDENTITY(1,1),
     --              data type    primary key  auto-increment
 
-    category_name   ___________  ___________
+    category_name   VARCHAR(200) NOT NULL
     --              data type    cannot be empty
 );
 
@@ -59,21 +61,21 @@ CREATE TABLE retailmart.categories (
 
 CREATE TABLE retailmart.products (
 
-    product_id      ___________  ___________  ___________,
+    product_id      INT PRIMARY KEY IDENTITY(1,1),
     --              data type    primary key  auto-increment
 
-    product_name    ___________  ___________,
+    product_name    VARCHAR(300) NOT NULL,
     --              data type    cannot be empty
 
-    category_id     ___________  ___________  _________________________,
+    category_id     INT NOT NULL REFERENCES retailmart.categories(category_id),
     --              data type    cannot be    links to categories table
     --                           empty
 
-    price           ___________  ___________  ___________,
-    --              decimal type cannot be    must be greater than 0
-    --                           empty
+    price           DECIMAL(10,2)  NOT NULL  CHECK(PRICE >0),
+    --              decimal type  cannot be    must be greater than 0
+    --                            empty
 
-    stock_qty       ___________  ___________  ___________
+    stock_qty       INT          NOT NULL  default 0
     --              data type    cannot be    default value = 0
     --                           empty
 );
@@ -86,13 +88,13 @@ CREATE TABLE retailmart.products (
 
 CREATE TABLE retailmart.stores (
 
-    store_id        ___________  ___________  ___________,
+    store_id        INT PRIMARY KEY IDENTITY(1,1),
     --              data type    primary key  auto-increment
 
-    store_name      ___________  ___________,
+    store_name      VARCHAR(300) NOT NULL,
     --              data type    cannot be empty
 
-    city            ___________  ___________
+    city            VARCHAR(300) NOT NULL,
     --              data type    cannot be empty
 );
 
@@ -104,20 +106,20 @@ CREATE TABLE retailmart.stores (
 
 CREATE TABLE retailmart.customers (
 
-    customer_id     ___________  ___________  ___________,
+    customer_id     INT PRIMARY KEY IDENTITY(1,1),
     --              data type    primary key  auto-increment
 
-    full_name       ___________  ___________,
+    full_name       VARCHAR(300) NOT NULL,
     --              data type    cannot be empty
 
-    email           ___________  ___________  ___________,
+    email           VARCHAR(300)  NOT NULL  UNIQUE,
     --              data type    cannot be    no two customers
     --                           empty        can share email
 
-    city            ___________,
+    city            VARCHAR(300),
     --              data type (nullable - customer may not provide city)
 
-    gender          ___________  ___________
+    gender          CHAR(1)  CHECK(gender IN ('M', 'F'))
     --              single char  only 'M' or 'F' allowed
 );
 
@@ -129,22 +131,22 @@ CREATE TABLE retailmart.customers (
 
 CREATE TABLE retailmart.orders (
 
-    order_id        ___________  ___________  ___________,
+    order_id       INT PRIMARY KEY IDENTITY(1,1),
     --              data type    primary key  auto-increment
 
-    store_id        ___________  ___________  _________________________,
+    store_id        INT NOT NULL REFERENCES retailmart.stores(store_id),
     --              data type    cannot be    links to stores table
     --                           empty
 
-    customer_id     ___________  ___________  _________________________,
+    customer_id     INT NOT NULL REFERENCES retailmart.customers(customer_id),
     --              data type    cannot be    links to customers table
     --                           empty
 
-    order_date      ___________  ___________  ___________,
+    order_date      DATE  NOT NULL DEFAULT GETDATE(),
     --              date type    cannot be    default = today's date
     --                           empty        (hint: use GETDATE())
 
-    status          ___________  ___________  ___________  ___________
+    status          VARCHAR(200) NOT NULL DEFAULT 'Pending' CHECK(STATUS IN ('Pending' , 'Shipped' , 'Delivered' , 'Cancelled'))
     --              data type    cannot be    default =    only allow:
     --                           empty        'Pending'    'Pending'
     --                                                     'Shipped'
@@ -161,24 +163,25 @@ CREATE TABLE retailmart.orders (
 
 CREATE TABLE retailmart.order_items (
 
-    item_id         ___________  ___________  ___________,
+    item_id         INT PRIMARY KEY IDENTITY(1,1),
     --              data type    primary key  auto-increment
 
-    order_id        ___________  ___________  _________________________,
+    order_id        INT NOT NULL REFERENCES retailmart.orders(order_id),
     --              data type    cannot be    links to orders table
     --                           empty
 
-    product_id      ___________  ___________  _________________________,
+    product_id      INT NOT NULL REFERENCES retailmart.products(product_id),
     --              data type    cannot be    links to products table
     --                           empty
 
-    quantity        ___________  ___________  ___________,
+    quantity        INT NOT NULL CHECK(quantity >0),
     --              data type    cannot be    must be greater than 0
     --                           empty
 
-    unit_price      ___________  ___________
+    unit_price      DECIMAL(10,2)  NOT NULL
     --              decimal type cannot be empty
 );
+
 
 
 --  END OF EXERCISE

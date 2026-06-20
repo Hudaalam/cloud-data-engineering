@@ -465,7 +465,6 @@ EXEC retailmart.sp_MonthlySalesReport @StoreID = 2;
 --  Set ops     UNION, INTERSECT, EXCEPT
 --  CTEs        Regular 
 --  Windows     ROW_NUMBER, RANK
---  PIVOT       Monthly revenue matrix
 --  Views       Standard + Indexed
 --  Indexes     Clustered, Non-clustered
 --  Procedures  Parameters, defaults
